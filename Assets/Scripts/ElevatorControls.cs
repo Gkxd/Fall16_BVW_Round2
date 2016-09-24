@@ -5,8 +5,10 @@ public class ElevatorControls : MonoBehaviour
 {
     public Transform leftDoor;
     public Transform rightDoor;
+    
 
     public float elevatorDoorSpeed;
+    public float elevatorEnableTime;
 
     public GameObject floor1; // Hallway covered in rubble
     public GameObject floor2; // Hallway with monster running at you
@@ -16,7 +18,7 @@ public class ElevatorControls : MonoBehaviour
     private Vector3 leftDoorOpenPosition;
     private Vector3 rightDoorClosedPosition;
     private Vector3 rightDoorOpenPosition;
-
+    
     public float doorPosition { get; private set; }
 
     private Coroutine moveDoorsRoutine;
@@ -27,12 +29,21 @@ public class ElevatorControls : MonoBehaviour
         leftDoorOpenPosition = leftDoorClosedPosition + Vector3.left * 2.045f;
         rightDoorClosedPosition = rightDoor.localPosition;
         rightDoorOpenPosition = rightDoorClosedPosition + Vector3.right * 2.045f;
+        
+    }
+
+
+    void enableMoveDoors()
+    {
+        Debug.Log("AsdSAdSAD");
+        moveDoorsRoutine = null;
     }
 
     void Update()
     {
         #region DEBUG
 
+        
         if (Input.GetKeyDown(KeyCode.Q))
         {
             MoveDoors(1);
@@ -43,9 +54,10 @@ public class ElevatorControls : MonoBehaviour
         }
 
         #endregion
+
     }
 
-    private void MoveDoors(float percentOpen) // 0 is closed, 1 is open
+    public void MoveDoors(float percentOpen) // 0 is closed, 1 is open
     {
         if (moveDoorsRoutine == null)
         {
@@ -63,6 +75,17 @@ public class ElevatorControls : MonoBehaviour
             yield return null;
         }
         doorPosition = (start < end) ? Mathf.Min(doorPosition, end) : Mathf.Max(doorPosition, end);
-        moveDoorsRoutine = null;
+
+        StartCoroutine(EnableElevatorDoors(elevatorEnableTime));
     }
+
+    IEnumerator EnableElevatorDoors(float time)
+    {
+        yield return new WaitForSeconds(time);
+
+
+        enableMoveDoors();
+        // Code to execute after the delay
+    }
+
 }
