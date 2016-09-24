@@ -1,13 +1,15 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+using UsefulThings;
+
 public class ElevatorControls : MonoBehaviour
 {
     public Transform leftDoor;
     public Transform rightDoor;
     
-
     public float elevatorDoorSpeed;
+    public float elevatorFloorInterval;
     public float elevatorEnableTime;
 
     public GameObject floor1; // Hallway covered in rubble
@@ -20,8 +22,10 @@ public class ElevatorControls : MonoBehaviour
     private Vector3 rightDoorOpenPosition;
     
     public float doorPosition { get; private set; }
+    public int floorPosition { get; private set; }
 
     private Coroutine moveDoorsRoutine;
+    private Coroutine moveFloorsRoutine;
 
     void Start()
     {
@@ -29,14 +33,8 @@ public class ElevatorControls : MonoBehaviour
         leftDoorOpenPosition = leftDoorClosedPosition + Vector3.left * 2.045f;
         rightDoorClosedPosition = rightDoor.localPosition;
         rightDoorOpenPosition = rightDoorClosedPosition + Vector3.right * 2.045f;
-        
-    }
 
-
-    void enableMoveDoors()
-    {
-        Debug.Log("AsdSAdSAD");
-        moveDoorsRoutine = null;
+        floorPosition = 4;
     }
 
     void Update()
@@ -54,12 +52,11 @@ public class ElevatorControls : MonoBehaviour
         }
 
         #endregion
-
     }
 
     public void MoveDoors(float percentOpen) // 0 is closed, 1 is open
     {
-        if (moveDoorsRoutine == null)
+        if (moveDoorsRoutine == null && moveFloorsRoutine == null)
         {
             moveDoorsRoutine = StartCoroutine(MoveDoorsRoutine(doorPosition, percentOpen));
         }
@@ -76,16 +73,42 @@ public class ElevatorControls : MonoBehaviour
         }
         doorPosition = (start < end) ? Mathf.Min(doorPosition, end) : Mathf.Max(doorPosition, end);
 
-        StartCoroutine(EnableElevatorDoors(elevatorEnableTime));
-    }
+        // Wait a few seconds before closing re-enabling elevator doors
+        yield return new WaitForSeconds(elevatorEnableTime);
 
-    IEnumerator EnableElevatorDoors(float time)
-    {
-        yield return new WaitForSeconds(time);
-
-
-        enableMoveDoors();
         // Code to execute after the delay
+
+        moveDoorsRoutine = null;
     }
 
+    public void MoveFloor(int floor)
+    {
+        if (moveDoorsRoutine == null && moveFloorsRoutine == null && floor != floorPosition)
+        {
+            moveFloorsRoutine = StartCoroutine(MoveFloorsRoutine(floorPosition, floor));
+        }
+    }
+
+    private IEnumerator MoveFloorsRoutine(int start, int end)
+    {
+        if (doorPosition > 0)
+        {
+            yield return StartCoroutine(MoveDoorsRoutine(doorPosition, 0));
+        }
+
+        while ((start < end) ? floorPosition < end : floorPosition > end)
+        {
+            yield return new WaitForSeconds(elevatorFloorInterval);
+
+            SfxManager.PlaySfx(1);
+
+            floorPosition += (start < end) ? 1 : -1;
+        }
+
+        yield return new WaitForSeconds(2 * elevatorFloorInterval);
+
+        yield return StartCoroutine(MoveDoorsRoutine(0, 1));
+
+        moveFloorsRoutine = null;
+    }
 }
