@@ -64,6 +64,8 @@ public class ElevatorControls : MonoBehaviour
 
     private IEnumerator MoveDoorsRoutine(float start, float end)
     {
+        yield return new WaitForSeconds(1);
+
         while ((start < end) ? doorPosition < end : doorPosition > end)
         {
             doorPosition += elevatorDoorSpeed * ((start < end) ? Time.deltaTime : -Time.deltaTime);
