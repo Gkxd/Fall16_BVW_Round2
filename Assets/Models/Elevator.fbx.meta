@@ -80,6 +80,46 @@ ModelImporter:
     100144: polySurface8
     100146: rail
     100148: transform6
+    100150: Door_body_02
+    100152: polySurface30
+    100154: polySurface33
+    100156: polySurface34
+    100158: polySurface35
+    100160: polySurface36
+    100162: polySurface37
+    100164: polySurface38
+    100166: polySurface39
+    100168: polySurface40
+    100170: polySurface41
+    100172: polySurface42
+    100174: polySurface43
+    100176: polySurface44
+    100178: polySurface45
+    100180: polySurface46
+    100182: polySurface47
+    100184: polySurface48
+    100186: polySurface49
+    100188: polySurface50
+    100190: polySurface51
+    100192: polySurface52
+    100194: polySurface53
+    100196: polySurface54
+    100198: polySurface55
+    100200: polySurface56
+    100202: polySurface57
+    100204: polySurface58
+    100206: polySurface59
+    100208: polySurface60
+    100210: polySurface61
+    100212: polySurface62
+    100214: polySurface63
+    100216: polySurface64
+    100218: polySurface65
+    100220: polySurface66
+    100222: polySurface67
+    100224: polySurface68
+    100226: transform10
+    100228: transform8
     400000: brail dot2664
     400002: brail dot2665
     400004: brail dot2667
@@ -155,6 +195,46 @@ ModelImporter:
     400144: polySurface8
     400146: rail
     400148: transform6
+    400150: Door_body_02
+    400152: polySurface30
+    400154: polySurface33
+    400156: polySurface34
+    400158: polySurface35
+    400160: polySurface36
+    400162: polySurface37
+    400164: polySurface38
+    400166: polySurface39
+    400168: polySurface40
+    400170: polySurface41
+    400172: polySurface42
+    400174: polySurface43
+    400176: polySurface44
+    400178: polySurface45
+    400180: polySurface46
+    400182: polySurface47
+    400184: polySurface48
+    400186: polySurface49
+    400188: polySurface50
+    400190: polySurface51
+    400192: polySurface52
+    400194: polySurface53
+    400196: polySurface54
+    400198: polySurface55
+    400200: polySurface56
+    400202: polySurface57
+    400204: polySurface58
+    400206: polySurface59
+    400208: polySurface60
+    400210: polySurface61
+    400212: polySurface62
+    400214: polySurface63
+    400216: polySurface64
+    400218: polySurface65
+    400220: polySurface66
+    400222: polySurface67
+    400224: polySurface68
+    400226: transform10
+    400228: transform8
     2300000: brail dot2664
     2300002: brail dot2665
     2300004: brail dot2667
@@ -220,6 +300,43 @@ ModelImporter:
     2300124: polySurface7
     2300126: polySurface8
     2300128: rail
+    2300130: polySurface30
+    2300132: polySurface33
+    2300134: polySurface34
+    2300136: polySurface35
+    2300138: polySurface36
+    2300140: polySurface37
+    2300142: polySurface38
+    2300144: polySurface39
+    2300146: polySurface40
+    2300148: polySurface41
+    2300150: polySurface42
+    2300152: polySurface43
+    2300154: polySurface44
+    2300156: polySurface45
+    2300158: polySurface46
+    2300160: polySurface47
+    2300162: polySurface48
+    2300164: polySurface49
+    2300166: polySurface50
+    2300168: polySurface51
+    2300170: polySurface52
+    2300172: polySurface53
+    2300174: polySurface54
+    2300176: polySurface55
+    2300178: polySurface56
+    2300180: polySurface57
+    2300182: polySurface58
+    2300184: polySurface59
+    2300186: polySurface60
+    2300188: polySurface61
+    2300190: polySurface62
+    2300192: polySurface63
+    2300194: polySurface64
+    2300196: polySurface65
+    2300198: polySurface66
+    2300200: polySurface67
+    2300202: polySurface68
     3300000: brail dot2664
     3300002: brail dot2665
     3300004: brail dot2667
@@ -285,6 +402,43 @@ ModelImporter:
     3300124: polySurface7
     3300126: polySurface8
     3300128: rail
+    3300130: polySurface30
+    3300132: polySurface33
+    3300134: polySurface34
+    3300136: polySurface35
+    3300138: polySurface36
+    3300140: polySurface37
+    3300142: polySurface38
+    3300144: polySurface39
+    3300146: polySurface40
+    3300148: polySurface41
+    3300150: polySurface42
+    3300152: polySurface43
+    3300154: polySurface44
+    3300156: polySurface45
+    3300158: polySurface46
+    3300160: polySurface47
+    3300162: polySurface48
+    3300164: polySurface49
+    3300166: polySurface50
+    3300168: polySurface51
+    3300170: polySurface52
+    3300172: polySurface53
+    3300174: polySurface54
+    3300176: polySurface55
+    3300178: polySurface56
+    3300180: polySurface57
+    3300182: polySurface58
+    3300184: polySurface59
+    3300186: polySurface60
+    3300188: polySurface61
+    3300190: polySurface62
+    3300192: polySurface63
+    3300194: polySurface64
+    3300196: polySurface65
+    3300198: polySurface66
+    3300200: polySurface67
+    3300202: polySurface68
     4300000: Guides
     4300002: floor
     4300004: Entrance_panel_detail
@@ -350,6 +504,43 @@ ModelImporter:
     4300124: inner_wall
     4300126: base
     4300128: lens
+    4300130: polySurface30
+    4300132: polySurface33
+    4300134: polySurface34
+    4300136: polySurface35
+    4300138: polySurface36
+    4300140: polySurface37
+    4300142: polySurface38
+    4300144: polySurface39
+    4300146: polySurface40
+    4300148: polySurface41
+    4300150: polySurface42
+    4300152: polySurface43
+    4300154: polySurface44
+    4300156: polySurface45
+    4300158: polySurface46
+    4300160: polySurface47
+    4300162: polySurface48
+    4300164: polySurface49
+    4300166: polySurface50
+    4300168: polySurface51
+    4300170: polySurface52
+    4300172: polySurface53
+    4300174: polySurface54
+    4300176: polySurface55
+    4300178: polySurface56
+    4300180: polySurface57
+    4300182: polySurface58
+    4300184: polySurface59
+    4300186: polySurface60
+    4300188: polySurface61
+    4300190: polySurface62
+    4300192: polySurface63
+    4300194: polySurface64
+    4300196: polySurface65
+    4300198: polySurface66
+    4300200: polySurface67
+    4300202: polySurface68
     9500000: //RootNode
   materials:
     importMaterials: 1
@@ -380,7 +571,7 @@ ModelImporter:
     addColliders: 0
     importBlendShapes: 1
     swapUVChannels: 0
-    generateSecondaryUV: 0
+    generateSecondaryUV: 1
     useFileUnits: 1
     optimizeMeshForGPU: 1
     keepQuads: 0

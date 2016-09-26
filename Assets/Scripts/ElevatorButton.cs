@@ -26,6 +26,6 @@ public class ElevatorButton : MonoBehaviour
     {
         onButtonPress.Invoke();
         SfxManager.PlaySfx(0);
-        buttonVisual.localPosition = Vector3.forward * 0.175f;
+        buttonVisual.localPosition = Vector3.forward * 0.09f;
     }
 }
