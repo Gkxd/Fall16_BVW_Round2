@@ -1,0 +1,417 @@
+fileFormatVersion: 2
+guid: c02bff7e53b18874596803840010dd38
+timeCreated: 1474847919
+licenseType: Free
+ModelImporter:
+  serializedVersion: 19
+  fileIDToRecycleName:
+    100000: brail dot2664
+    100002: brail dot2665
+    100004: brail dot2667
+    100006: brail dot2668
+    100008: brail dot2670
+    100010: brail dot2671
+    100012: brail dot2673
+    100014: brail dot2674
+    100016: buttons
+    100018: cabinet_door
+    100020: door
+    100022: //RootNode
+    100024: emergency
+    100026: Entrance_detail1
+    100028: Entrance_panel_detail
+    100030: floor
+    100032: floor_number
+    100034: group
+    100036: Guides
+    100038: key
+    100040: latch
+    100042: panel_body
+    100044: pasted__button
+    100046: pasted__button_2
+    100048: pasted__button__1
+    100050: pasted__pCylinder3
+    100052: pasted__pCylinder4
+    100054: pasted__phone_icon
+    100056: pasted__pSphere2
+    100058: pasted__pSphere3
+    100060: pCube1
+    100062: pCube11
+    100064: pCube13
+    100066: pCube15
+    100068: pCube17
+    100070: pCube2
+    100072: pCube21
+    100074: pCube23
+    100076: pCube24
+    100078: pCube7
+    100080: pCube9
+    100082: pCylinder1
+    100084: pCylinder2
+    100086: pCylinder4
+    100088: pCylinder5
+    100090: pCylinder6
+    100092: phone_body
+    100094: polySurface1
+    100096: polySurface4
+    100098: pSphere3
+    100100: pSphere4
+    100102: pSphere5
+    100104: pSphere6
+    100106: Text1124
+    100108: Text1146
+    100110: Text1325
+    100112: Text1326
+    100114: Text1331
+    100116: Text1332
+    100118: Text1337
+    100120: text_maximumload
+    100122: transform1
+    100124: typeMesh1
+    100126: typeMesh2
+    100128: typeMesh3
+    100130: base
+    100132: camera
+    100134: inner_wall
+    100136: lens
+    100138: polySurface5
+    100140: polySurface6
+    100142: polySurface7
+    100144: polySurface8
+    100146: rail
+    100148: transform6
+    400000: brail dot2664
+    400002: brail dot2665
+    400004: brail dot2667
+    400006: brail dot2668
+    400008: brail dot2670
+    400010: brail dot2671
+    400012: brail dot2673
+    400014: brail dot2674
+    400016: buttons
+    400018: cabinet_door
+    400020: door
+    400022: //RootNode
+    400024: emergency
+    400026: Entrance_detail1
+    400028: Entrance_panel_detail
+    400030: floor
+    400032: floor_number
+    400034: group
+    400036: Guides
+    400038: key
+    400040: latch
+    400042: panel_body
+    400044: pasted__button
+    400046: pasted__button_2
+    400048: pasted__button__1
+    400050: pasted__pCylinder3
+    400052: pasted__pCylinder4
+    400054: pasted__phone_icon
+    400056: pasted__pSphere2
+    400058: pasted__pSphere3
+    400060: pCube1
+    400062: pCube11
+    400064: pCube13
+    400066: pCube15
+    400068: pCube17
+    400070: pCube2
+    400072: pCube21
+    400074: pCube23
+    400076: pCube24
+    400078: pCube7
+    400080: pCube9
+    400082: pCylinder1
+    400084: pCylinder2
+    400086: pCylinder4
+    400088: pCylinder5
+    400090: pCylinder6
+    400092: phone_body
+    400094: polySurface1
+    400096: polySurface4
+    400098: pSphere3
+    400100: pSphere4
+    400102: pSphere5
+    400104: pSphere6
+    400106: Text1124
+    400108: Text1146
+    400110: Text1325
+    400112: Text1326
+    400114: Text1331
+    400116: Text1332
+    400118: Text1337
+    400120: text_maximumload
+    400122: transform1
+    400124: typeMesh1
+    400126: typeMesh2
+    400128: typeMesh3
+    400130: base
+    400132: camera
+    400134: inner_wall
+    400136: lens
+    400138: polySurface5
+    400140: polySurface6
+    400142: polySurface7
+    400144: polySurface8
+    400146: rail
+    400148: transform6
+    2300000: brail dot2664
+    2300002: brail dot2665
+    2300004: brail dot2667
+    2300006: brail dot2668
+    2300008: brail dot2670
+    2300010: brail dot2671
+    2300012: brail dot2673
+    2300014: brail dot2674
+    2300016: door
+    2300018: Entrance_detail1
+    2300020: Entrance_panel_detail
+    2300022: floor
+    2300024: floor_number
+    2300026: Guides
+    2300028: key
+    2300030: latch
+    2300032: panel_body
+    2300034: pasted__button
+    2300036: pasted__pCylinder3
+    2300038: pasted__pCylinder4
+    2300040: pasted__phone_icon
+    2300042: pasted__pSphere2
+    2300044: pasted__pSphere3
+    2300046: pCube1
+    2300048: pCube11
+    2300050: pCube13
+    2300052: pCube15
+    2300054: pCube17
+    2300056: pCube2
+    2300058: pCube21
+    2300060: pCube23
+    2300062: pCube24
+    2300064: pCube7
+    2300066: pCube9
+    2300068: pCylinder1
+    2300070: pCylinder2
+    2300072: pCylinder4
+    2300074: pCylinder5
+    2300076: pCylinder6
+    2300078: phone_body
+    2300080: polySurface1
+    2300082: polySurface4
+    2300084: pSphere3
+    2300086: pSphere4
+    2300088: pSphere5
+    2300090: pSphere6
+    2300092: Text1124
+    2300094: Text1146
+    2300096: Text1325
+    2300098: Text1326
+    2300100: Text1331
+    2300102: Text1332
+    2300104: Text1337
+    2300106: text_maximumload
+    2300108: typeMesh1
+    2300110: typeMesh2
+    2300112: typeMesh3
+    2300114: base
+    2300116: inner_wall
+    2300118: lens
+    2300120: polySurface5
+    2300122: polySurface6
+    2300124: polySurface7
+    2300126: polySurface8
+    2300128: rail
+    3300000: brail dot2664
+    3300002: brail dot2665
+    3300004: brail dot2667
+    3300006: brail dot2668
+    3300008: brail dot2670
+    3300010: brail dot2671
+    3300012: brail dot2673
+    3300014: brail dot2674
+    3300016: door
+    3300018: Entrance_detail1
+    3300020: Entrance_panel_detail
+    3300022: floor
+    3300024: floor_number
+    3300026: Guides
+    3300028: key
+    3300030: latch
+    3300032: panel_body
+    3300034: pasted__button
+    3300036: pasted__pCylinder3
+    3300038: pasted__pCylinder4
+    3300040: pasted__phone_icon
+    3300042: pasted__pSphere2
+    3300044: pasted__pSphere3
+    3300046: pCube1
+    3300048: pCube11
+    3300050: pCube13
+    3300052: pCube15
+    3300054: pCube17
+    3300056: pCube2
+    3300058: pCube21
+    3300060: pCube23
+    3300062: pCube24
+    3300064: pCube7
+    3300066: pCube9
+    3300068: pCylinder1
+    3300070: pCylinder2
+    3300072: pCylinder4
+    3300074: pCylinder5
+    3300076: pCylinder6
+    3300078: phone_body
+    3300080: polySurface1
+    3300082: polySurface4
+    3300084: pSphere3
+    3300086: pSphere4
+    3300088: pSphere5
+    3300090: pSphere6
+    3300092: Text1124
+    3300094: Text1146
+    3300096: Text1325
+    3300098: Text1326
+    3300100: Text1331
+    3300102: Text1332
+    3300104: Text1337
+    3300106: text_maximumload
+    3300108: typeMesh1
+    3300110: typeMesh2
+    3300112: typeMesh3
+    3300114: base
+    3300116: inner_wall
+    3300118: lens
+    3300120: polySurface5
+    3300122: polySurface6
+    3300124: polySurface7
+    3300126: polySurface8
+    3300128: rail
+    4300000: Guides
+    4300002: floor
+    4300004: Entrance_panel_detail
+    4300006: pSphere5
+    4300008: phone_body
+    4300010: pSphere3
+    4300012: pSphere4
+    4300014: pSphere6
+    4300016: pasted__button
+    4300018: pasted__pCylinder3
+    4300020: pasted__pSphere2
+    4300022: pasted__pSphere3
+    4300024: pasted__pCylinder4
+    4300026: pasted__phone_icon
+    4300028: pCube24
+    4300030: pCube9
+    4300032: pCube17
+    4300034: pCube15
+    4300036: brail dot2670
+    4300038: pCube23
+    4300040: Text1325
+    4300042: brail dot2664
+    4300044: Text1331
+    4300046: Text1326
+    4300048: brail dot2665
+    4300050: pCube21
+    4300052: brail dot2674
+    4300054: pCube11
+    4300056: Text1146
+    4300058: pCube1
+    4300060: Text1337
+    4300062: pCube13
+    4300064: Text1124
+    4300066: Text1332
+    4300068: brail dot2667
+    4300070: brail dot2668
+    4300072: pCube7
+    4300074: brail dot2671
+    4300076: brail dot2673
+    4300078: typeMesh3
+    4300080: typeMesh2
+    4300082: typeMesh1
+    4300084: pCylinder6
+    4300086: panel_body
+    4300088: floor_number
+    4300090: text_maximumload
+    4300092: key
+    4300094: latch
+    4300096: door
+    4300098: pCube2
+    4300100: pCylinder2
+    4300102: pCylinder4
+    4300104: pCylinder5
+    4300106: pCylinder1
+    4300108: polySurface1
+    4300110: polySurface4
+    4300112: Entrance_detail1
+    4300114: polySurface5
+    4300116: polySurface6
+    4300118: polySurface7
+    4300120: polySurface8
+    4300122: rail
+    4300124: inner_wall
+    4300126: base
+    4300128: lens
+    9500000: //RootNode
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 10
+    meshCompression: 0
+    addColliders: 0
+    importBlendShapes: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    hasTranslationDoF: 0
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 2
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
