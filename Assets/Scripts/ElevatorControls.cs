@@ -190,7 +190,7 @@ public class ElevatorControls : MonoBehaviour
         
         if (floorsVisited == 0)
         {
-            StartCoroutine(MoveOuterDoorsRoutine(0, 0.5f));
+            StartCoroutine(MoveOuterDoorsRoutine(0, 0.35f));
             SfxManager.PlaySfx(7, 0.5f);
         }
         else
