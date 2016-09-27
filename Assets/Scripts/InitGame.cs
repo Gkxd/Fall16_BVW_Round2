@@ -11,7 +11,8 @@ public class InitGame : MonoBehaviour {
     private IEnumerator StartSequence()
     {
         SfxManager.PlayLoop(0); // Start ambient noise
-        yield return new WaitForSeconds(1);
+        SfxManager.PlaySfx(14);
+        yield return new WaitForSeconds(3);
         SfxManager.PlaySfx(8); // Party invite
     }
 }
