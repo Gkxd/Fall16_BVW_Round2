@@ -8,11 +8,15 @@ public class ElevatorControls : MonoBehaviour
 {
     public Transform leftDoor;
     public Transform rightDoor;
+    public Transform leftDoorOuter;
+    public Transform rightDoorOuter;
     
     public float elevatorDoorSpeed;
     public float elevatorFloorInterval;
 
     public ColorCorrectionCurves dimLights;
+
+    public TextMesh floorDisplay;
 
     public GameObject floor1; // Hallway covered in rubble
     public GameObject floor2; // Hallway with monster running at you
@@ -22,8 +26,14 @@ public class ElevatorControls : MonoBehaviour
     private Vector3 leftDoorOpenPosition;
     private Vector3 rightDoorClosedPosition;
     private Vector3 rightDoorOpenPosition;
-    
+
+    private Vector3 leftDoorOuterClosedPosition;
+    private Vector3 leftDoorOuterOpenPosition;
+    private Vector3 rightDoorOuterClosedPosition;
+    private Vector3 rightDoorOuterOpenPosition;
+
     public float doorPosition { get; private set; }
+    public float outerDoorPosition { get; private set; }
     public int floorPosition { get; private set; }
 
     private Coroutine moveDoorsRoutine;
@@ -50,12 +60,19 @@ public class ElevatorControls : MonoBehaviour
         rightDoorClosedPosition = rightDoor.localPosition;
         rightDoorOpenPosition = rightDoorClosedPosition + Vector3.right * 0.75f;
 
+
+        leftDoorOuterClosedPosition = leftDoorOuter.localPosition;
+        leftDoorOuterOpenPosition = leftDoorOuterClosedPosition + Vector3.left * 0.75f;
+        rightDoorOuterClosedPosition = rightDoorOuter.localPosition;
+        rightDoorOuterOpenPosition = rightDoorOuterClosedPosition + Vector3.right * 0.75f;
+
         floorPosition = 6;
         floorsVisited = 0;
-
+        
         hallLights = GameObject.FindGameObjectsWithTag("HallLight");
         onColor = GameObject.FindWithTag("HallLight").GetComponent<Renderer>().material.GetColor("_EmissionColor");
-
+        
+        floorDisplay.text = "  " + floorPosition + "F";
     }
 
     public void MoveDoors(float percentOpen) // 0 is closed, 1 is open
@@ -63,6 +80,7 @@ public class ElevatorControls : MonoBehaviour
         if (moveDoorsRoutine == null && moveFloorsRoutine == null)
         {
             moveDoorsRoutine = StartCoroutine(MoveDoorsRoutine(doorPosition, percentOpen, waitTime: 3));
+            StartCoroutine(MoveOuterDoorsRoutine(outerDoorPosition, percentOpen, waitTime: 3));
         }
     }
 
@@ -84,6 +102,21 @@ public class ElevatorControls : MonoBehaviour
         moveDoorsRoutine = null;
     }
 
+    private IEnumerator MoveOuterDoorsRoutine(float start, float end, float waitTime = 0)
+    {
+        yield return new WaitForSeconds(waitTime);
+
+        while ((start < end) ? doorPosition < end : doorPosition > end)
+        {
+            outerDoorPosition += elevatorDoorSpeed * ((start < end) ? Time.deltaTime : -Time.deltaTime);
+            leftDoorOuter.localPosition = Vector3.Lerp(leftDoorOuterClosedPosition, leftDoorOuterOpenPosition, outerDoorPosition);
+            rightDoorOuter.localPosition = Vector3.Lerp(rightDoorOuterClosedPosition, rightDoorOuterOpenPosition, outerDoorPosition);
+            yield return null;
+        }
+
+        outerDoorPosition = (start < end) ? Mathf.Min(outerDoorPosition, end) : Mathf.Max(outerDoorPosition, end);
+    }
+
     public void MoveFloor(int floor)
     {
         if (moveDoorsRoutine == null && moveFloorsRoutine == null && floor != floorPosition)
@@ -103,6 +136,9 @@ public class ElevatorControls : MonoBehaviour
 
         int floorProgress = 0;
 
+        string directionArrow = (start < end) ? "^ " : "v ";
+        floorDisplay.text = directionArrow + floorPosition + "F";
+
         while ((start < end) ? floorPosition < end : floorPosition > end)
         {
             if (floorsVisited == 0 && floorProgress == 2) // Intro cutscene
@@ -118,20 +154,28 @@ public class ElevatorControls : MonoBehaviour
                 for (int i = 0; i < 5; i++) // Lights flash for a bit
                 {
                     dimLights.enabled = true;
+                    floorDisplay.gameObject.SetActive(false);
                     yield return new WaitForSeconds(0.15f);
+
                     dimLights.enabled = false;
+                    floorDisplay.gameObject.SetActive(true);
                     yield return new WaitForSeconds(0.1f);
                 }
 
                 // Lights turn off
                 dimLights.enabled = true;
-                yield return new WaitForSeconds(15);
+                floorDisplay.gameObject.SetActive(false);
+                yield return new WaitForSeconds(3);
+
+                SfxManager.PlaySfx(6); // Screaming
+                yield return new WaitForSeconds(8);
 
                 SfxManager.PlaySfx(5);
                 yield return new WaitForSeconds(1);
 
                 // Lights back on
                 dimLights.enabled = false;
+                floorDisplay.gameObject.SetActive(true);
                 yield return new WaitForSeconds(2);
 
                 SfxManager.PlayLoop(0);
@@ -169,11 +213,25 @@ public class ElevatorControls : MonoBehaviour
             SfxManager.PlaySfx(1);
 
             floorPosition += (start < end) ? 1 : -1;
+
+            floorDisplay.text = directionArrow + floorPosition + "F";
         }
+
+        floorDisplay.text = "  " + floorPosition + "F";
 
         SfxManager.StopLoop(1);
 
         yield return new WaitForSeconds(1);
+        
+        if (floorsVisited == 0)
+        {
+            StartCoroutine(MoveOuterDoorsRoutine(0, 0.35f));
+            SfxManager.PlaySfx(7, 0.5f);
+        }
+        else
+        {
+            StartCoroutine(MoveOuterDoorsRoutine(0, 1));
+        }
         yield return StartCoroutine(MoveDoorsRoutine(0, 1));
 
         if (floorsVisited == 1) //Floor#2 Cut Scene

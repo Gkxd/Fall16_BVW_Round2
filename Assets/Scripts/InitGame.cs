@@ -5,6 +5,13 @@ using UsefulThings;
 
 public class InitGame : MonoBehaviour {
 	void Start () {
-        SfxManager.PlayLoop(0); // Start ambient noise
+        StartCoroutine(StartSequence());
 	}
+
+    private IEnumerator StartSequence()
+    {
+        SfxManager.PlayLoop(0); // Start ambient noise
+        yield return new WaitForSeconds(1);
+        SfxManager.PlaySfx(8); // Party invite
+    }
 }
