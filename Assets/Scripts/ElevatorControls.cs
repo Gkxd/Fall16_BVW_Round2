@@ -29,7 +29,19 @@ public class ElevatorControls : MonoBehaviour
     private Coroutine moveDoorsRoutine;
     private Coroutine moveFloorsRoutine;
 
+    private Color onColor;
+
     private int floorsVisited;
+
+    private bool moveMonster = false;
+    private bool monsterStopped = false;
+
+    private GameObject[] hallLights;
+
+    public GameObject monster;
+    private GameObject monsterObj;
+
+    public Curve monsterBobbingMotion;
 
     void Start()
     {
@@ -40,6 +52,10 @@ public class ElevatorControls : MonoBehaviour
 
         floorPosition = 6;
         floorsVisited = 0;
+
+        hallLights = GameObject.FindGameObjectsWithTag("HallLight");
+        onColor = GameObject.FindWithTag("HallLight").GetComponent<Renderer>().material.GetColor("_EmissionColor");
+
     }
 
     public void MoveDoors(float percentOpen) // 0 is closed, 1 is open
@@ -80,7 +96,7 @@ public class ElevatorControls : MonoBehaviour
     {
         if (doorPosition > 0)
         {
-            yield return StartCoroutine(MoveDoorsRoutine(doorPosition, 0, waitTime: 3));
+            yield return StartCoroutine(MoveDoorsRoutine(doorPosition, 0, waitTime: 5));
         }
 
         SfxManager.PlayLoop(1, 0.1f);
@@ -123,8 +139,28 @@ public class ElevatorControls : MonoBehaviour
 
                 yield return new WaitForSeconds(elevatorFloorInterval * 0.5f);
             }
+            if(floorsVisited == 1)
+            {
+
+                for(int i = 0; i < hallLights.Length; i++)
+                {
+                    Renderer renderer = hallLights[i].GetComponent<Renderer>();
+                    DynamicGI.SetEmissive(renderer, Color.black);
+                    renderer.material.SetColor("_EmissionColor", Color.black);
+                }
+
+                yield return new WaitForSeconds(elevatorFloorInterval * 0.5f);
+            }
             else
             {
+
+                for (int i = 0; i < hallLights.Length; i++)
+                {
+                    Renderer renderer = hallLights[i].GetComponent<Renderer>();
+                    DynamicGI.SetEmissive(renderer, onColor);
+                    renderer.material.SetColor("_EmissionColor", onColor);
+                }
+
                 yield return new WaitForSeconds(elevatorFloorInterval);
             }
 
@@ -140,7 +176,103 @@ public class ElevatorControls : MonoBehaviour
         yield return new WaitForSeconds(1);
         yield return StartCoroutine(MoveDoorsRoutine(0, 1));
 
+        if (floorsVisited == 1) //Floor#2 Cut Scene
+        {
+            monsterObj = Instantiate(monster);
+            SfxManager.PlaySfx(6);
+
+            yield return new WaitForSeconds(2);
+            SfxManager.PlaySfx(7);
+
+            moveMonster = true;
+            StartCoroutine(Rise());
+            yield return new WaitForSeconds(20);
+
+            SfxManager.PlaySfx(start < end ? 2 : 3);
+
+            monsterStopped = true; 
+
+            while ((doorPosition < 0) ? doorPosition < 0 : doorPosition > 0)
+            {
+                doorPosition += elevatorDoorSpeed * ((doorPosition < 0) ? Time.deltaTime : -Time.deltaTime);
+                leftDoor.localPosition = Vector3.Lerp(leftDoorClosedPosition, leftDoorOpenPosition, doorPosition);
+                rightDoor.localPosition = Vector3.Lerp(rightDoorClosedPosition, rightDoorOpenPosition, doorPosition);
+                
+                
+                yield return null;
+            }
+
+            doorPosition = (doorPosition < 0) ? Mathf.Min(doorPosition, 0) : Mathf.Max(doorPosition, 0);
+
+            
+            //monsterDoorInterrupt = false;
+            //Debug.Log(monsterDoorInterrupt);
+
+            
+
+
+            
+
+
+        }
+
         floorsVisited++;
         moveFloorsRoutine = null;
+    }
+
+    void Update()
+    {
+        if (moveMonster)
+        {
+            if (monsterObj)
+            {
+
+                monsterObj.transform.Translate((Vector3.forward) * Time.deltaTime * 1.3f);
+                //monsterObj.transform.Translate(Vector3.up * Time.deltaTime * 2f);
+                //monsterObj.transform.Translate(Vector3.down * Time.deltaTime * 2f);
+            }
+        }
+        
+        if(monsterStopped==true)
+        {
+            StartCoroutine(PlayBangEffect());
+            monsterStopped = false;
+        }
+
+    }
+
+    IEnumerator Rise()
+    {
+        if (monsterObj)
+        {
+            while(true)
+            {
+                monsterObj.transform.position = Vector3.up * monsterBobbingMotion.Evaluate(Time.time);
+                yield return null;
+            }
+        }
+    }
+
+    IEnumerator Fall()
+    {
+        if (monsterObj)
+        {
+            monsterObj.transform.Translate(Vector3.down * Time.deltaTime * 10f);
+            yield return new WaitForSeconds(0.5f);
+            StartCoroutine(Rise());
+        }
+    }
+
+    IEnumerator PlayBangEffect()
+    {
+        yield return new WaitForSeconds(3);
+        SfxManager.PlaySfx(8);
+        CameraShake.ShakeCamera(0.3f, 2);
+        moveMonster = false;
+        Destroy(monsterObj, 1f);
+
+        yield return new WaitForSeconds(2);
+        SfxManager.PlaySfx(8);
+        CameraShake.ShakeCamera(0.3f, 2);
     }
 }
