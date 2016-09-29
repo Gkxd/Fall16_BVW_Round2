@@ -147,7 +147,7 @@ public class ElevatorControls : MonoBehaviour
             }
         }
 
-        SfxManager.PlayLoop(1, 0.1f);
+        SfxManager.PlayLoop(1);
 
         int floorProgress = 0;
 
@@ -232,10 +232,14 @@ public class ElevatorControls : MonoBehaviour
             yield return new WaitForSeconds(2);
             SfxManager.PlaySfx(10);
 
-            yield return new WaitForSeconds(2);
+            Coroutine flickerLightsRoutine = StartCoroutine(FlickerElevatorLights());
+
+            yield return new WaitForSeconds(3);
             canCloseDoors = true;
-            yield return new WaitForSeconds(18);
+            yield return new WaitForSeconds(17);
             canCloseDoors = false;
+
+            StopCoroutine(flickerLightsRoutine);
 
             if (doorPosition > 0) // If you don't close door fast enough, you die
             {
@@ -243,6 +247,7 @@ public class ElevatorControls : MonoBehaviour
             }
             else // Play banging effect/cutscene
             {
+                lightControl.AllLightsOn();
                 floor2.SetActive(false);
 
                 SfxManager.PlaySfx(11);
@@ -266,6 +271,21 @@ public class ElevatorControls : MonoBehaviour
 
         floorsVisited++;
         moveFloorsRoutine = null;
+    }
+
+    private IEnumerator FlickerElevatorLights()
+    {
+        while (true)
+        {
+            for (int i = 0; i < Random.Range(1, 4); i++)
+            {
+                lightControl.AllLightsOff();
+                yield return new WaitForSeconds(Random.Range(0.05f, 0.1f));
+                lightControl.AllLightsOn();
+                yield return new WaitForSeconds(Random.Range(0.05f, 0.15f));
+            }
+            yield return new WaitForSeconds(Random.Range(1, 2.5f));
+        }
     }
 
     /*
