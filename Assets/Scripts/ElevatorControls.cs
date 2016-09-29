@@ -129,7 +129,7 @@ public class ElevatorControls : MonoBehaviour
             passCodeDisplay.text = "";
             SfxManager.PlaySfx(18);
             yield return new WaitForSeconds(1f);
-            MoveFloor(-5);
+            MoveFloor(5);
         }
         else
         {
