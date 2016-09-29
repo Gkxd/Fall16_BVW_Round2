@@ -3,6 +3,8 @@ using UnityStandardAssets.ImageEffects;
 using System.Collections;
 
 using UsefulThings;
+using System.Collections.Generic;
+using System;
 
 public class ElevatorControls : MonoBehaviour
 {
@@ -18,6 +20,10 @@ public class ElevatorControls : MonoBehaviour
     public ColorCorrectionCurves dimLights;
 
     public TextMesh floorDisplay;
+
+    public TextMesh passCodeDisplay;
+
+    private bool waitForCodeCheck = false;
 
     public GameObject floor1; // Hallway covered in rubble
     public GameObject floor2; // Hallway with monster running at you
@@ -42,6 +48,9 @@ public class ElevatorControls : MonoBehaviour
     private Coroutine moveDoorsRoutine;
     private Coroutine moveFloorsRoutine;
 
+    private bool cabinetOpen = false;
+    private bool codeAccepted = false;
+
     private Color onColor;
 
     private int floorsVisited;
@@ -58,6 +67,10 @@ public class ElevatorControls : MonoBehaviour
 
     public Curve monsterBobbingMotion;
 
+    private int numAttempts = 0;
+    private List<int> attempts;
+    
+
     void Start()
     {
         leftDoorClosedPosition = leftDoor.localPosition;
@@ -65,6 +78,7 @@ public class ElevatorControls : MonoBehaviour
         rightDoorClosedPosition = rightDoor.localPosition;
         rightDoorOpenPosition = rightDoorClosedPosition + Vector3.right * 0.75f;
 
+        attempts = new List<int>();
 
         leftDoorOuterClosedPosition = leftDoorOuter.localPosition;
         leftDoorOuterOpenPosition = leftDoorOuterClosedPosition + Vector3.left * 0.75f;
@@ -87,6 +101,76 @@ public class ElevatorControls : MonoBehaviour
             moveDoorsRoutine = StartCoroutine(MoveDoorsRoutine(doorPosition, percentOpen, waitTime: 3));
             StartCoroutine(MoveOuterDoorsRoutine(outerDoorPosition, percentOpen, waitTime: 3));
         }
+    }
+
+    public void EnterCode(int codeValue)
+    {
+        if (cabinetOpen)
+        {
+            if (waitForCodeCheck == false)
+            {
+                SfxManager.PlaySfx(16);
+
+                if (passCodeDisplay.text.CompareTo("---") == 0)
+                    passCodeDisplay.text = codeValue.ToString();
+                else
+                    passCodeDisplay.text += codeValue;
+
+                if (passCodeDisplay.text.Length == 3)
+                {
+                    waitForCodeCheck = true;
+                    if (numAttempts == 9)
+                    {
+                        //Play right sound and move elevator
+                        numAttempts = 0;
+                    }
+                    else
+                    {
+                        StartCoroutine(checkCode(Int32.Parse(passCodeDisplay.text)));
+                    }
+                }
+            }   
+        }
+    }
+
+    private IEnumerator checkCode(int codeValue)
+    {
+        yield return new WaitForSeconds(2f);
+
+        //attempts.Add(codeValue);
+
+        if (numAttempts == 5)
+        {
+            //Right
+            codeAccepted = true;
+            passCodeDisplay.text = "";
+            SfxManager.PlaySfx(18);
+            yield return new WaitForSeconds(1f);
+            MoveFloor(-5);
+        }
+        else
+        {
+            //Wrong
+            //check for unique attempts
+            Debug.Log(codeValue);
+            Debug.Log(attempts.Contains(codeValue));
+            if (!attempts.Contains(codeValue))
+            {
+                numAttempts++;
+                attempts.Add(codeValue);
+            }
+            passCodeDisplay.text = "RETRY";
+            SfxManager.PlaySfx(17);
+            yield return new WaitForSeconds(1f);
+            passCodeDisplay.text = "---";
+            waitForCodeCheck = false;
+
+        }
+    }
+
+    public bool GetCabinetOpen()
+    {
+        return cabinetOpen;
     }
 
     private IEnumerator MoveDoorsRoutine(float start, float end, float waitTime = 0)
@@ -299,7 +383,6 @@ public class ElevatorControls : MonoBehaviour
 
     IEnumerator PlayBangEffect()
     {
-        //StartCoroutine(OpenCabinetDoor());
         yield return new WaitForSeconds(3);
         SfxManager.PlaySfx(11);
         CameraShake.ShakeCamera(0.3f, 2);
@@ -312,19 +395,37 @@ public class ElevatorControls : MonoBehaviour
 
         yield return new WaitForSeconds(1);
         SfxManager.PlaySfx(13);
+        StartCoroutine(OpenCabinetDoor());
 
         moveFloorsRoutine = null;
         moveDoorsRoutine = null;
+        doorPosition = 0;
+
+        InvokeRepeating("MonsterHit", 10.0f, 7.0f);
     }
-    /*
+
+    void MonsterHit()
+    {
+        if (!codeAccepted)
+        {
+            SfxManager.PlaySfx(11);
+            CameraShake.ShakeCamera(0.3f, 2);
+        }
+    }
+    
     IEnumerator OpenCabinetDoor()
     {
         floor8Button.SetActive(true);
         Transform targetAngle = cabinetDoor.Find("TargetAngle");
-        while (true)
+
+        //Play panel open sound
+        SfxManager.PlaySfx(15);
+
+        while (!cabinetOpen)
         {
-            cabinetDoor.forward = Vector3.Slerp(cabinetDoor.forward, targetAngle.forward, 0.1f);
-            yield return new WaitForSeconds(0.05f);
+            cabinetDoor.forward = Vector3.Slerp(cabinetDoor.forward,targetAngle.forward, 5f);
+            yield return new WaitForSeconds(3f);
+            cabinetOpen = true;
         }
     }
 
@@ -335,5 +436,5 @@ public class ElevatorControls : MonoBehaviour
             StartCoroutine(OpenCabinetDoor());
         }
     }
-    */
+    
 }
