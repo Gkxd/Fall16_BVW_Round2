@@ -120,6 +120,12 @@ ModelImporter:
     100224: polySurface68
     100226: transform10
     100228: transform8
+    100230: brail dot2675
+    100232: brail dot2676
+    100234: pCube35
+    100236: pCube36
+    100238: typeMesh4
+    100240: typeMesh5
     400000: brail dot2664
     400002: brail dot2665
     400004: brail dot2667
@@ -235,6 +241,12 @@ ModelImporter:
     400224: polySurface68
     400226: transform10
     400228: transform8
+    400230: brail dot2675
+    400232: brail dot2676
+    400234: pCube35
+    400236: pCube36
+    400238: typeMesh4
+    400240: typeMesh5
     2300000: brail dot2664
     2300002: brail dot2665
     2300004: brail dot2667
@@ -337,6 +349,12 @@ ModelImporter:
     2300198: polySurface66
     2300200: polySurface67
     2300202: polySurface68
+    2300204: brail dot2675
+    2300206: brail dot2676
+    2300208: pCube35
+    2300210: pCube36
+    2300212: typeMesh4
+    2300214: typeMesh5
     3300000: brail dot2664
     3300002: brail dot2665
     3300004: brail dot2667
@@ -439,6 +457,12 @@ ModelImporter:
     3300198: polySurface66
     3300200: polySurface67
     3300202: polySurface68
+    3300204: brail dot2675
+    3300206: brail dot2676
+    3300208: pCube35
+    3300210: pCube36
+    3300212: typeMesh4
+    3300214: typeMesh5
     4300000: Guides
     4300002: floor
     4300004: Entrance_panel_detail
@@ -541,6 +565,12 @@ ModelImporter:
     4300198: polySurface66
     4300200: polySurface67
     4300202: polySurface68
+    4300204: pCube35
+    4300206: brail dot2675
+    4300208: brail dot2676
+    4300210: pCube36
+    4300212: typeMesh4
+    4300214: typeMesh5
     9500000: //RootNode
   materials:
     importMaterials: 1
