@@ -8,9 +8,11 @@ public class CameraFade : _ChangeColor
 
     public Material fadeMaterial;
 
+    bool isBlack;
+
     void OnPostRender()
     {
-        fadeMaterial.color = getColor();
+        fadeMaterial.color = isBlack ? Color.black : getColor();
         fadeMaterial.SetPass(0);
         GL.PushMatrix();
         GL.LoadOrtho();
@@ -22,5 +24,10 @@ public class CameraFade : _ChangeColor
         GL.Vertex3(1f, 0f, -12f);
         GL.End();
         GL.PopMatrix();
+    }
+
+    public void CutToBlack()
+    {
+        isBlack = true;
     }
 }

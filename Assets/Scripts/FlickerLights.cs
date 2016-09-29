@@ -8,12 +8,20 @@ public class FlickerLights : MonoBehaviour
     private Renderer r;
     private Color onColor;
 
+    private Coroutine flickerRoutine;
+
     void OnEnable()
     {
         r = GetComponent<Renderer>();
         onColor = r.material.GetColor("_EmissionColor");
         if (!flickerOff) SetColor(Color.black); 
-        StartCoroutine(Flicker());
+        flickerRoutine = StartCoroutine(Flicker());
+    }
+
+    void OnDisable()
+    {
+        StopCoroutine(flickerRoutine);
+        SetColor(flickerOff ? onColor : Color.black);
     }
     
     private IEnumerator Flicker() {

@@ -8,32 +8,27 @@ public class ElevatorControls : MonoBehaviour
 {
     public Transform leftDoor;
     public Transform rightDoor;
-    public Transform leftDoorOuter;
-    public Transform rightDoorOuter;
     public Transform cabinetDoor;
 
     public float elevatorDoorSpeed;
     public float elevatorFloorInterval;
 
-    public ColorCorrectionCurves dimLights;
+    public LightControl lightControl;
 
     public TextMesh floorDisplay;
 
     public GameObject floor1; // Hallway covered in rubble
     public GameObject floor2; // Hallway with monster running at you
     public GameObject floor3; // Hallway with jumpscare/death
-    public GameObject floor8Button;
-    public GameObject endMonster;
+
+    public CameraFade cameraFade;
+
+    public Renderer[] hallLights;
 
     private Vector3 leftDoorClosedPosition;
     private Vector3 leftDoorOpenPosition;
     private Vector3 rightDoorClosedPosition;
     private Vector3 rightDoorOpenPosition;
-
-    private Vector3 leftDoorOuterClosedPosition;
-    private Vector3 leftDoorOuterOpenPosition;
-    private Vector3 rightDoorOuterClosedPosition;
-    private Vector3 rightDoorOuterOpenPosition;
 
     public float doorPosition { get; private set; }
     public float outerDoorPosition { get; private set; }
@@ -42,21 +37,8 @@ public class ElevatorControls : MonoBehaviour
     private Coroutine moveDoorsRoutine;
     private Coroutine moveFloorsRoutine;
 
-    private Color onColor;
-
     private int floorsVisited;
-
-    private bool moveMonster = false;
-    private bool monsterStopped = false;
-
-    private GameObject[] hallLights;
-
-    public GameObject jumpScare;
-
-    public GameObject monster;
-    private GameObject monsterObj;
-
-    public Curve monsterBobbingMotion;
+    private bool canCloseDoors;
 
     void Start()
     {
@@ -65,27 +47,26 @@ public class ElevatorControls : MonoBehaviour
         rightDoorClosedPosition = rightDoor.localPosition;
         rightDoorOpenPosition = rightDoorClosedPosition + Vector3.right * 0.75f;
 
-
-        leftDoorOuterClosedPosition = leftDoorOuter.localPosition;
-        leftDoorOuterOpenPosition = leftDoorOuterClosedPosition + Vector3.left * 0.75f;
-        rightDoorOuterClosedPosition = rightDoorOuter.localPosition;
-        rightDoorOuterOpenPosition = rightDoorOuterClosedPosition + Vector3.right * 0.75f;
-
-        floorPosition = 6;
+        floorPosition = 3;
         floorsVisited = 0;
-
-        hallLights = GameObject.FindGameObjectsWithTag("HallLight");
-        onColor = GameObject.FindWithTag("HallLight").GetComponent<Renderer>().material.GetColor("_EmissionColor");
-
-        floorDisplay.text = "  " + floorPosition + "F";
+        floorDisplay.text = "  B" + floorPosition;
     }
 
-    public void MoveDoors(float percentOpen) // 0 is closed, 1 is open
+    public void MoveDoors(bool open) // true = open, false = close
     {
-        if (moveDoorsRoutine == null && moveFloorsRoutine == null)
+        if (moveDoorsRoutine == null)
         {
-            moveDoorsRoutine = StartCoroutine(MoveDoorsRoutine(doorPosition, percentOpen, waitTime: 3));
-            StartCoroutine(MoveOuterDoorsRoutine(outerDoorPosition, percentOpen, waitTime: 3));
+            if (moveFloorsRoutine == null || canCloseDoors)
+            {
+                if (floorsVisited == 0)
+                {
+                    moveDoorsRoutine = StartCoroutine(MoveDoorsRoutine(doorPosition, open ? 1 : 0, waitTime: 3));
+                }
+                else
+                {
+                    moveDoorsRoutine = StartCoroutine(MoveDoorsRoutine(doorPosition, doorPosition + (open ? 0.1f : -0.1f), waitTime: 1));
+                }
+            }
         }
     }
 
@@ -93,7 +74,21 @@ public class ElevatorControls : MonoBehaviour
     {
         yield return new WaitForSeconds(waitTime);
 
-        SfxManager.PlaySfx(start < end ? 2 : 3);
+        if (floorsVisited == 0)
+        {
+            SfxManager.PlaySfx(start < end ? 3 : 2);
+        }
+        else
+        {
+            if (start < end)
+            {
+                SfxManager.PlaySfx(3);
+            }
+            else
+            {
+                // Play broken door sfx instead
+            }
+        }
 
         while ((start < end) ? doorPosition < end : doorPosition > end)
         {
@@ -102,29 +97,14 @@ public class ElevatorControls : MonoBehaviour
             rightDoor.localPosition = Vector3.Lerp(rightDoorClosedPosition, rightDoorOpenPosition, doorPosition);
             yield return null;
         }
+
         doorPosition = (start < end) ? Mathf.Min(doorPosition, end) : Mathf.Max(doorPosition, end);
 
         moveDoorsRoutine = null;
     }
 
-    private IEnumerator MoveOuterDoorsRoutine(float start, float end, float waitTime = 0)
-    {
-        yield return new WaitForSeconds(waitTime);
-
-        while ((start < end) ? doorPosition < end : doorPosition > end)
-        {
-            outerDoorPosition += elevatorDoorSpeed * ((start < end) ? Time.deltaTime : -Time.deltaTime);
-            leftDoorOuter.localPosition = Vector3.Lerp(leftDoorOuterClosedPosition, leftDoorOuterOpenPosition, outerDoorPosition);
-            rightDoorOuter.localPosition = Vector3.Lerp(rightDoorOuterClosedPosition, rightDoorOuterOpenPosition, outerDoorPosition);
-            yield return null;
-        }
-
-        outerDoorPosition = (start < end) ? Mathf.Min(outerDoorPosition, end) : Mathf.Max(outerDoorPosition, end);
-    }
-
     public void MoveFloor(int floor)
     {
-        Debug.Log(moveDoorsRoutine + " " + moveFloorsRoutine + " " + floorPosition);
         if (moveDoorsRoutine == null && moveFloorsRoutine == null && floor != floorPosition)
         {
             moveFloorsRoutine = StartCoroutine(MoveFloorsRoutine(floorPosition, floor));
@@ -135,23 +115,35 @@ public class ElevatorControls : MonoBehaviour
     {
         if (doorPosition > 0)
         {
-            yield return StartCoroutine(MoveDoorsRoutine(doorPosition, 0, waitTime: 5));
+            if (floorsVisited == 0)
+            {
+                yield return StartCoroutine(MoveDoorsRoutine(doorPosition, 0, waitTime: 3));
+            }
+            else
+            {
+                yield return StartCoroutine(MoveDoorsRoutine(doorPosition, doorPosition - 0.1f, waitTime: 1));
+                if (doorPosition > 0)
+                {
+                    moveFloorsRoutine = null;
+                    yield break;
+                }
+            }
         }
 
-        if (floorsVisited > 0)
-        {
-            for (int i = 0; i < hallLights.Length; i++)
-            {
-                Renderer renderer = hallLights[i].GetComponent<Renderer>();
+        yield return new WaitForSeconds(1);
 
-                FlickerLights flicker = renderer.GetComponent<FlickerLights>();
+        if (floorsVisited > 0) // Disable lights on later floors
+        {
+            foreach (Renderer light in hallLights)
+            {
+                FlickerLights flicker = light.GetComponent<FlickerLights>();
                 if (flicker)
                 {
                     flicker.enabled = false;
                 }
 
-                DynamicGI.SetEmissive(renderer, Color.black);
-                renderer.material.SetColor("_EmissionColor", Color.black);
+                DynamicGI.SetEmissive(light, Color.black);
+                light.material.SetColor("_EmissionColor", Color.black);
             }
         }
 
@@ -159,12 +151,12 @@ public class ElevatorControls : MonoBehaviour
 
         int floorProgress = 0;
 
-        string directionArrow = (start < end) ? "^ " : "v ";
-        floorDisplay.text = directionArrow + floorPosition + "F";
+        string directionArrow = (start < end) ? "v " : "^ ";
+        floorDisplay.text = directionArrow + (floorPosition == 0 ? "1F" : "B" + floorPosition);
 
         while ((start < end) ? floorPosition < end : floorPosition > end)
         {
-            if (floorsVisited == 0 && floorProgress == 2) // Intro cutscene
+            if (floorsVisited == 0 && floorProgress == 2) // Elevator crash cutscene
             {
                 yield return new WaitForSeconds(elevatorFloorInterval * 0.5f);
 
@@ -176,28 +168,25 @@ public class ElevatorControls : MonoBehaviour
 
                 for (int i = 0; i < 5; i++) // Lights flash for a bit
                 {
-                    dimLights.enabled = true;
+                    lightControl.AllLightsOff();
                     floorDisplay.gameObject.SetActive(false);
                     yield return new WaitForSeconds(0.15f);
 
-                    dimLights.enabled = false;
+                    lightControl.AllLightsOn();
                     floorDisplay.gameObject.SetActive(true);
                     yield return new WaitForSeconds(0.1f);
                 }
 
                 // Lights turn off
-                dimLights.enabled = true;
+                lightControl.AllLightsOff();
                 floorDisplay.gameObject.SetActive(false);
-                yield return new WaitForSeconds(3);
-
-                SfxManager.PlaySfx(6); // Screaming
-                yield return new WaitForSeconds(8);
+                yield return new WaitForSeconds(5);
 
                 SfxManager.PlaySfx(5);
                 yield return new WaitForSeconds(1);
 
                 // Lights back on
-                dimLights.enabled = false;
+                lightControl.AllLightsOn();
                 floorDisplay.gameObject.SetActive(true);
                 yield return new WaitForSeconds(2);
 
@@ -217,10 +206,10 @@ public class ElevatorControls : MonoBehaviour
 
             floorPosition += (start < end) ? 1 : -1;
 
-            floorDisplay.text = directionArrow + floorPosition + "F";
+            floorDisplay.text = directionArrow + "B" + floorPosition;
         }
 
-        floorDisplay.text = "  " + floorPosition + "F";
+        floorDisplay.text = floorPosition == 0 ? "  1F" : "  B" + floorPosition;
 
         SfxManager.StopLoop(1);
 
@@ -232,90 +221,53 @@ public class ElevatorControls : MonoBehaviour
             floor1.SetActive(false);
         }
 
-        if (floorsVisited == 0)
-        {
-            StartCoroutine(MoveOuterDoorsRoutine(0, 0.35f));
-            SfxManager.PlaySfx(7, 0.5f);
-        }
-        else
-        {
-            StartCoroutine(MoveOuterDoorsRoutine(0, 1));
-        }
+        // Open doors after you reach the floor
         yield return StartCoroutine(MoveDoorsRoutine(0, 1));
 
         if (floorsVisited == 1) //Floor#2 Cut Scene
         {
-            monsterObj = Instantiate(monster);
+            floor2.SetActive(true);
             SfxManager.PlaySfx(9);
 
             yield return new WaitForSeconds(2);
             SfxManager.PlaySfx(10);
-            
-            StartCoroutine(Rise());
-            yield return new WaitForSeconds(16.5f);
 
-            SfxManager.PlaySfx(start < end ? 2 : 3);
+            yield return new WaitForSeconds(2);
+            canCloseDoors = true;
+            yield return new WaitForSeconds(18);
+            canCloseDoors = false;
 
-            StartCoroutine(PlayBangEffect());
+            if (doorPosition > 0) // If you don't close door fast enough, you die
+            {
+                cameraFade.CutToBlack();
+            }
+            else // Play banging effect/cutscene
+            {
+                floor2.SetActive(false);
 
-            yield return StartCoroutine(MoveOuterDoorsRoutine(1, 0));
-            yield return StartCoroutine(MoveDoorsRoutine(1, 0));
+                SfxManager.PlaySfx(11);
+                CameraShake.ShakeCamera(0.3f, 2);
+
+                yield return new WaitForSeconds(2);
+                SfxManager.PlaySfx(12);
+                CameraShake.ShakeCamera(0.3f, 2);
+
+                yield return new WaitForSeconds(1);
+                SfxManager.PlaySfx(13);
+            }
         }
         else if (floorsVisited == 2) //Floor 3 Cutscene
         {
             Debug.Log("You Reached Floor 8");
-            jumpScare.SetActive(true);
 
             yield return new WaitForSeconds(2);
-            endMonster.SetActive(true);
             SfxManager.PlaySfx(9);
         }
 
         floorsVisited++;
         moveFloorsRoutine = null;
-
-        Debug.Log("Hello " + floorsVisited);
     }
 
-    IEnumerator Rise()
-    {
-        float startTime = Time.time;
-        while (true)
-        {
-            if (monsterObj)
-            {
-                Vector3 position = monsterObj.transform.position;
-                position -= Vector3.forward * Time.deltaTime * 1.62f;
-                position.y = monsterBobbingMotion.Evaluate(Time.time - startTime);
-                monsterObj.transform.position = position;
-                yield return null;
-            }
-            else
-            {
-                break;
-            }
-        }
-    }
-
-    IEnumerator PlayBangEffect()
-    {
-        //StartCoroutine(OpenCabinetDoor());
-        yield return new WaitForSeconds(3);
-        SfxManager.PlaySfx(11);
-        CameraShake.ShakeCamera(0.3f, 2);
-        moveMonster = false;
-        Destroy(monsterObj, 1f);
-
-        yield return new WaitForSeconds(2);
-        SfxManager.PlaySfx(12);
-        CameraShake.ShakeCamera(0.3f, 2);
-
-        yield return new WaitForSeconds(1);
-        SfxManager.PlaySfx(13);
-
-        moveFloorsRoutine = null;
-        moveDoorsRoutine = null;
-    }
     /*
     IEnumerator OpenCabinetDoor()
     {
