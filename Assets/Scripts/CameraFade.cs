@@ -16,7 +16,6 @@ public class CameraFade : _ChangeColor
         fadeMaterial.SetPass(0);
         GL.PushMatrix();
         GL.LoadOrtho();
-        //GL.Color(getColor());
         GL.Begin(GL.QUADS);
         GL.Vertex3(0f, 0f, -12f);
         GL.Vertex3(0f, 1f, -12f);

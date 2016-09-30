@@ -40,18 +40,18 @@ public class ElevatorControls : MonoBehaviour
 
     private Coroutine moveDoorsRoutine;
     private Coroutine moveFloorsRoutine;
-    
+
     private bool cabinetOpen = false;
     private bool codeAccepted = false;
 
     private Color onColor;
-    
+
     private int floorsVisited;
     private bool canCloseDoors;
 
     private int numAttempts = 0;
     private List<int> attempts;
-    
+
 
     void Start()
     {
@@ -59,10 +59,10 @@ public class ElevatorControls : MonoBehaviour
         leftDoorOpenPosition = leftDoorClosedPosition + Vector3.left * 0.75f;
         rightDoorClosedPosition = rightDoor.localPosition;
         rightDoorOpenPosition = rightDoorClosedPosition + Vector3.right * 0.75f;
-        
+
         attempts = new List<int>();
-        
-       
+
+
         floorPosition = 3;
         floorsVisited = 0;
         floorDisplay.text = "  B" + floorPosition;
@@ -80,7 +80,15 @@ public class ElevatorControls : MonoBehaviour
                 }
                 else
                 {
-                    moveDoorsRoutine = StartCoroutine(MoveDoorsRoutine(doorPosition, doorPosition + (open ? 0.1f : -0.1f), waitTime: 1));
+                    if (canCloseDoors && !open && doorPosition - 0.1f < 0.5f)
+                    {
+                        moveDoorsRoutine = StartCoroutine(MoveDoorsRoutine(doorPosition, 0.5f, waitTime: 1));
+                        canCloseDoors = false;
+                    }
+                    else
+                    {
+                        moveDoorsRoutine = StartCoroutine(MoveDoorsRoutine(doorPosition, doorPosition + (open ? 0.1f : -0.1f), waitTime: 1));
+                    }
                 }
             }
         }
@@ -94,10 +102,14 @@ public class ElevatorControls : MonoBehaviour
             {
                 SfxManager.PlaySfx(16);
 
-                if (passCodeDisplay.text.CompareTo("---") == 0)
+                if (passCodeDisplay.text == "---")
+                {
                     passCodeDisplay.text = codeValue.ToString();
+                }
                 else
+                {
                     passCodeDisplay.text += codeValue;
+                }
 
                 if (passCodeDisplay.text.Length == 3)
                 {
@@ -112,7 +124,7 @@ public class ElevatorControls : MonoBehaviour
                         StartCoroutine(checkCode(int.Parse(passCodeDisplay.text)));
                     }
                 }
-            }   
+            }
         }
     }
 
@@ -179,7 +191,7 @@ public class ElevatorControls : MonoBehaviour
             yield return null;
         }
 
-        doorPosition = (start < end) ? Mathf.Min(doorPosition, end) : Mathf.Max(doorPosition, end);
+        doorPosition = (start < end) ? Mathf.Min(doorPosition, end, 1) : Mathf.Max(doorPosition, end, 0);
 
         moveDoorsRoutine = null;
     }
@@ -276,6 +288,10 @@ public class ElevatorControls : MonoBehaviour
 
                 yield return new WaitForSeconds(elevatorFloorInterval * 0.5f);
             }
+            else if (floorPosition == 4 && end == 5) // Last cutscene part 1
+            {
+                yield return new WaitForSeconds(30);
+            }
             else
             {
                 yield return new WaitForSeconds(elevatorFloorInterval * 0.5f);
@@ -315,19 +331,23 @@ public class ElevatorControls : MonoBehaviour
 
             Coroutine flickerLightsRoutine = StartCoroutine(FlickerElevatorLights());
 
-            yield return new WaitForSeconds(3);
+            yield return new WaitForSeconds(8);
             canCloseDoors = true;
-            yield return new WaitForSeconds(17);
+
+            yield return new WaitForSeconds(10);
             canCloseDoors = false;
 
-            StopCoroutine(flickerLightsRoutine);
-
-            if (doorPosition > 0) // If you don't close door fast enough, you die
+            if (doorPosition > 0.5f) // If you don't close door fast enough, you die
             {
+                yield return new WaitForSeconds(2);
                 cameraFade.CutToBlack();
             }
             else // Play banging effect/cutscene
             {
+                yield return StartCoroutine(MoveDoorsRoutine(doorPosition, 0));
+
+                StopCoroutine(flickerLightsRoutine);
+
                 lightControl.AllLightsOn();
                 floor2.SetActive(false);
 
@@ -342,7 +362,7 @@ public class ElevatorControls : MonoBehaviour
                 SfxManager.PlaySfx(13);
                 StartCoroutine(OpenCabinetDoor());
 
-                InvokeRepeating("MonsterHit", 10.0f, 7.0f);
+                //InvokeRepeating("MonsterHit", 10.0f, 7.0f);
             }
         }
         else if (floorsVisited == 2) //Floor 3 Cutscene
@@ -382,7 +402,7 @@ public class ElevatorControls : MonoBehaviour
             CameraShake.ShakeCamera(0.3f, 2);
         }
     }
-    
+
     IEnumerator OpenCabinetDoor()
     {
         Transform targetAngle = cabinetDoor.Find("TargetAngle");
@@ -390,7 +410,7 @@ public class ElevatorControls : MonoBehaviour
         //Play panel open sound
         SfxManager.PlaySfx(15);
 
-        cabinetDoor.forward = Vector3.Slerp(cabinetDoor.forward,targetAngle.forward, 5f);
+        cabinetDoor.forward = Vector3.Slerp(cabinetDoor.forward, targetAngle.forward, 5f);
         cabinetOpen = true;
 
         yield return null;
@@ -403,5 +423,5 @@ public class ElevatorControls : MonoBehaviour
             StartCoroutine(OpenCabinetDoor());
         }
     }
-    
+
 }
