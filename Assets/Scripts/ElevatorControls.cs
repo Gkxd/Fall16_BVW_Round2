@@ -292,7 +292,10 @@ public class ElevatorControls : MonoBehaviour
                 floorDisplay.gameObject.SetActive(false);
                 yield return new WaitForSeconds(5);
 
-                SfxManager.PlaySfx(5);
+                SfxManager.PlaySfx(19); // Evacuation announcement
+                yield return new WaitForSeconds(20);
+
+                SfxManager.PlaySfx(5); // Lights turn on sound
                 yield return new WaitForSeconds(1);
 
                 // Lights back on
@@ -303,7 +306,6 @@ public class ElevatorControls : MonoBehaviour
                 shepardTone.SetActive(true);
                 SfxManager.PlayLoop(0);
                 SfxManager.PlayLoop(1, 0.1f);
-                SfxManager.PlaySfx(19);
                 SfxManager.PlayLoop(3);
 
                 yield return new WaitForSeconds(elevatorFloorInterval * 0.5f);
