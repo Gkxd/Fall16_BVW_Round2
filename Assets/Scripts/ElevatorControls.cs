@@ -66,6 +66,7 @@ public class ElevatorControls : MonoBehaviour
         floorPosition = 3;
         floorsVisited = 0;
         floorDisplay.text = "  B" + floorPosition;
+        passCodeDisplay.text = "";
     }
 
     public void MoveDoors(bool open) // true = open, false = close
@@ -180,6 +181,7 @@ public class ElevatorControls : MonoBehaviour
             else
             {
                 // Play broken door sfx instead
+                SfxManager.PlaySfx(20);
             }
         }
 
@@ -285,6 +287,8 @@ public class ElevatorControls : MonoBehaviour
 
                 SfxManager.PlayLoop(0);
                 SfxManager.PlayLoop(1, 0.1f);
+                SfxManager.PlaySfx(19);
+                SfxManager.PlayLoop(3);
 
                 yield return new WaitForSeconds(elevatorFloorInterval * 0.5f);
             }
@@ -361,8 +365,8 @@ public class ElevatorControls : MonoBehaviour
                 yield return new WaitForSeconds(1);
                 SfxManager.PlaySfx(13);
                 StartCoroutine(OpenCabinetDoor());
-
-                //InvokeRepeating("MonsterHit", 10.0f, 7.0f);
+                passCodeDisplay.text = "---";
+                InvokeRepeating("MonsterHit", 45.0f, 7.0f);
             }
         }
         else if (floorsVisited == 2) //Floor 3 Cutscene
