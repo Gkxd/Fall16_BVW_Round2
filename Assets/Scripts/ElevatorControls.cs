@@ -58,6 +58,10 @@ public class ElevatorControls : MonoBehaviour
     private int numAttempts = 0;
     private List<int> attempts;
 
+    private bool onRouteToSecret = false;
+
+    private Vector3 floorDisplayPosition;
+
 
     void Start()
     {
@@ -66,7 +70,14 @@ public class ElevatorControls : MonoBehaviour
         rightDoorClosedPosition = rightDoor.localPosition;
         rightDoorOpenPosition = rightDoorClosedPosition + Vector3.right * 0.75f;
 
+        floorDisplayPosition = floorDisplay.transform.position;
+
         attempts = new List<int>();
+
+        for (int i= 0;i< elevatorLightSparks.Length; i++)
+        {
+            elevatorLightSparks[i].Stop();
+        }
 
 
         floorPosition = 3;
@@ -138,10 +149,13 @@ public class ElevatorControls : MonoBehaviour
     private IEnumerator checkCode(int codeValue)
     {
         yield return new WaitForSeconds(2f);
+        
+        string compareStr = "11";
+        string firstTwoDigits = codeValue.ToString().Substring(0, 2);
 
-        //attempts.Add(codeValue);
+        Debug.Log(string.Compare(firstTwoDigits, compareStr));
 
-        if (numAttempts == 5)
+        if (numAttempts >= 5 && !attempts.Contains(codeValue) && string.Compare(firstTwoDigits,compareStr)==0)
         {
             //Right
             codeAccepted = true;
@@ -189,7 +203,7 @@ public class ElevatorControls : MonoBehaviour
             else
             {
                 // Play broken door sfx instead
-                SfxManager.PlaySfx(20);
+                SfxManager.PlaySfx(Random.Range(34,36));
             }
         }
 
@@ -304,7 +318,7 @@ public class ElevatorControls : MonoBehaviour
                 floorDisplay.gameObject.SetActive(true);
                 yield return new WaitForSeconds(2);
 
-                shepardTone.SetActive(true);
+                //shepardTone.SetActive(true);
                 SfxManager.PlayLoop(0);
                 SfxManager.PlayLoop(1, 0.1f);
                 SfxManager.PlayLoop(3);
@@ -313,11 +327,68 @@ public class ElevatorControls : MonoBehaviour
             }
             else if (floorPosition == 4 && end == 5) // Last cutscene part 1
             {
-                yield return new WaitForSeconds(30);
+                onRouteToSecret = true;
+                StartCoroutine(AnimateFloorDisplay());
+
+                // 30 seconds
+                yield return new WaitForSeconds(5);
+                SfxManager.PlaySfx(27);
+                SfxManager.PlaySfx(21);
+                SfxManager.PlaySfx(22);
+                CameraShake.ShakeCamera(0.3f, 3);
+                lightControl.CeilingLightOff(0);
+                ElevatorLightBurst(0);
+                
+                yield return new WaitForSeconds(5);
+                SfxManager.PlaySfx(29);
+                SfxManager.PlaySfx(25);
+                SfxManager.PlaySfx(26);
+                CameraShake.ShakeCamera(0.3f, 3);
+                lightControl.CeilingLightOff(1);
+                ElevatorLightBurst(1);
+
+                yield return new WaitForSeconds(5);
+                SfxManager.PlaySfx(30);
+                SfxManager.PlaySfx(22);
+                SfxManager.PlaySfx(25);
+                CameraShake.ShakeCamera(0.3f, 3);
+                lightControl.CeilingLightOff(2);
+                ElevatorLightBurst(2);
+
+                yield return new WaitForSeconds(5);
+                SfxManager.PlaySfx(30);
+                SfxManager.PlaySfx(22);
+                SfxManager.PlaySfx(25);
+                CameraShake.ShakeCamera(0.3f, 4);
+                lightControl.CeilingLightOff(3);
+                ElevatorLightBurst(3);
+
+                yield return new WaitForSeconds(5);
+                SfxManager.PlaySfx(29);
+                SfxManager.PlaySfx(21);
+                SfxManager.PlaySfx(26);
+                CameraShake.ShakeCamera(0.3f, 4);
+                lightControl.AllLightsOff();
+
+                for (int i = 0; i < elevatorLightSparks.Length; i++)
+                {
+                    elevatorLightSparks[i].Play();
+                }
+
+
+                yield return new WaitForSeconds(5);
+                onRouteToSecret = false;
+                CameraShake.ShakeCamera(0.3f, 4);
+                SfxManager.PlaySfx(31);
+                SfxManager.PlaySfx(21);
+                SfxManager.PlaySfx(26);
+
             }
             else
             {
                 yield return new WaitForSeconds(elevatorFloorInterval * 0.5f);
+                SfxManager.StopLoop(4);
+
             }
 
             floorProgress++;
@@ -327,9 +398,16 @@ public class ElevatorControls : MonoBehaviour
             floorPosition += (start < end) ? 1 : -1;
 
             floorDisplay.text = directionArrow + "B" + floorPosition;
+            
         }
 
         floorDisplay.text = floorPosition == 0 ? "  1F" : "  B" + floorPosition;
+
+        if (floorPosition == 5)
+            floorDisplay.text = "ER1";
+
+        if (floorPosition == 0)
+            SfxManager.PlayLoop(4);
 
         SfxManager.StopLoop(1);
 
@@ -370,10 +448,12 @@ public class ElevatorControls : MonoBehaviour
 
             SfxManager.PlaySfx(11);
             CameraShake.ShakeCamera(0.3f, 2);
+            SfxManager.PlaySfx(25);
 
             yield return new WaitForSeconds(2);
             SfxManager.PlaySfx(12);
             CameraShake.ShakeCamera(0.3f, 2);
+            SfxManager.PlaySfx(23);
 
             yield return new WaitForSeconds(1);
             SfxManager.PlaySfx(13);
@@ -438,14 +518,30 @@ public class ElevatorControls : MonoBehaviour
         }
     }
 
+    IEnumerator AnimateFloorDisplay()
+    {
+        while (onRouteToSecret) {
 
+            floorDisplay.text = "vvv";
+            floorDisplay.transform.position = floorDisplayPosition;
+
+            yield return new WaitForSeconds(0.5f);
+            floorDisplay.transform.position += Vector3.down * Time.deltaTime * 0.5f;
+
+            yield return new WaitForSeconds(0.5f);
+            floorDisplay.text = "";
+
+
+        }
+    }
 
     void MonsterHit()
     {
-        if (!codeAccepted)
+        if (codeAccepted==false)
         {
             SfxManager.PlaySfx(11);
             CameraShake.ShakeCamera(0.3f, 2);
+            SfxManager.PlaySfx(Random.Range(21, 26));
         }
     }
 
