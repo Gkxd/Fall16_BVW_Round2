@@ -5,14 +5,22 @@ using UsefulThings;
 
 public class CameraFade : _ChangeColor
 {
-
+    public Gradient whiteGradient;
     public Material fadeMaterial;
 
     bool isBlack;
+    bool isFadingToWhite;
 
     void OnPostRender()
     {
-        fadeMaterial.color = isBlack ? Color.black : getColor();
+        if (isFadingToWhite)
+        {
+            fadeMaterial.color = whiteGradient.Evaluate(curve.Evaluate(GetComponent<TimeKeeper>()));
+        }
+        else
+        {
+            fadeMaterial.color = isBlack ? Color.black : getColor();
+        }
         fadeMaterial.SetPass(0);
         GL.PushMatrix();
         GL.LoadOrtho();
@@ -28,5 +36,10 @@ public class CameraFade : _ChangeColor
     public void CutToBlack()
     {
         isBlack = true;
+    }
+
+    public void FadeToWhite() {
+        GetComponent<TimeKeeper>().resetTime();
+        isFadingToWhite = true;
     }
 }
