@@ -25,6 +25,8 @@ public class ElevatorControls : MonoBehaviour
     public GameObject floor2; // Hallway with monster running at you
     public GameObject floor3; // Hallway with jumpscare/death
 
+    public GameObject shepardTone;
+
     public CameraFade cameraFade;
 
     public Renderer[] hallLights;
@@ -38,6 +40,8 @@ public class ElevatorControls : MonoBehaviour
     public float outerDoorPosition { get; private set; }
     public int floorPosition { get; private set; }
 
+    public AnimationCurve doorPositionCurve;
+
     private Coroutine moveDoorsRoutine;
     private Coroutine moveFloorsRoutine;
 
@@ -48,6 +52,7 @@ public class ElevatorControls : MonoBehaviour
 
     private int floorsVisited;
     private bool canCloseDoors;
+    private bool canOpenDoors;
 
     private int numAttempts = 0;
     private List<int> attempts;
@@ -168,13 +173,15 @@ public class ElevatorControls : MonoBehaviour
     {
         yield return new WaitForSeconds(waitTime);
 
+        bool opening = start < end;
+
         if (floorsVisited == 0)
         {
-            SfxManager.PlaySfx(start < end ? 3 : 2);
+            SfxManager.PlaySfx(opening ? 3 : 2);
         }
         else
         {
-            if (start < end)
+            if (opening)
             {
                 SfxManager.PlaySfx(3);
             }
@@ -185,15 +192,23 @@ public class ElevatorControls : MonoBehaviour
             }
         }
 
-        while ((start < end) ? doorPosition < end : doorPosition > end)
+        while (opening ? doorPosition < end : doorPosition > end)
         {
             doorPosition += elevatorDoorSpeed * ((start < end) ? Time.deltaTime : -Time.deltaTime);
-            leftDoor.localPosition = Vector3.Lerp(leftDoorClosedPosition, leftDoorOpenPosition, doorPosition);
-            rightDoor.localPosition = Vector3.Lerp(rightDoorClosedPosition, rightDoorOpenPosition, doorPosition);
+            if (opening && !canOpenDoors)
+            {
+                leftDoor.localPosition = Vector3.Lerp(leftDoorClosedPosition, leftDoorOpenPosition, doorPositionCurve.Evaluate(doorPosition));
+                rightDoor.localPosition = Vector3.Lerp(rightDoorClosedPosition, rightDoorOpenPosition, doorPositionCurve.Evaluate(doorPosition));
+            }
+            else
+            {
+                leftDoor.localPosition = Vector3.Lerp(leftDoorClosedPosition, leftDoorOpenPosition, doorPosition);
+                rightDoor.localPosition = Vector3.Lerp(rightDoorClosedPosition, rightDoorOpenPosition, doorPosition);
+            }
             yield return null;
         }
 
-        doorPosition = (start < end) ? Mathf.Min(doorPosition, end, 1) : Mathf.Max(doorPosition, end, 0);
+        doorPosition = opening ? Mathf.Min(doorPosition, end, 1) : Mathf.Max(doorPosition, end, 0);
 
         moveDoorsRoutine = null;
     }
@@ -285,6 +300,7 @@ public class ElevatorControls : MonoBehaviour
                 floorDisplay.gameObject.SetActive(true);
                 yield return new WaitForSeconds(2);
 
+                shepardTone.SetActive(true);
                 SfxManager.PlayLoop(0);
                 SfxManager.PlayLoop(1, 0.1f);
                 SfxManager.PlaySfx(19);
