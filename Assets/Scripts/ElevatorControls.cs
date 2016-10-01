@@ -30,6 +30,7 @@ public class ElevatorControls : MonoBehaviour
     public CameraFade cameraFade;
 
     public Renderer[] hallLights;
+    public ParticleSystem[] elevatorLightSparks;
 
     private Vector3 leftDoorClosedPosition;
     private Vector3 leftDoorOpenPosition;
@@ -359,6 +360,28 @@ public class ElevatorControls : MonoBehaviour
             yield return new WaitForSeconds(10);
             canCloseDoors = false;
 
+            // Play banging effect/cutscene
+            yield return StartCoroutine(MoveDoorsRoutine(doorPosition, 0));
+
+            StopCoroutine(flickerLightsRoutine);
+
+            lightControl.AllLightsOn();
+            floor2.SetActive(false);
+
+            SfxManager.PlaySfx(11);
+            CameraShake.ShakeCamera(0.3f, 2);
+
+            yield return new WaitForSeconds(2);
+            SfxManager.PlaySfx(12);
+            CameraShake.ShakeCamera(0.3f, 2);
+
+            yield return new WaitForSeconds(1);
+            SfxManager.PlaySfx(13);
+            StartCoroutine(OpenCabinetDoor());
+            passCodeDisplay.text = "---";
+            InvokeRepeating("MonsterHit", 45.0f, 7.0f);
+
+            /*
             if (doorPosition > 0.5f) // If you don't close door fast enough, you die
             {
                 yield return new WaitForSeconds(2);
@@ -386,6 +409,7 @@ public class ElevatorControls : MonoBehaviour
                 passCodeDisplay.text = "---";
                 InvokeRepeating("MonsterHit", 45.0f, 7.0f);
             }
+            */
         }
         else if (floorsVisited == 2) //Floor 3 Cutscene
         {
@@ -444,6 +468,11 @@ public class ElevatorControls : MonoBehaviour
         {
             StartCoroutine(OpenCabinetDoor());
         }
+    }
+
+    private void ElevatorLightBurst(int i)
+    {
+        elevatorLightSparks[i].Emit(Random.Range(100, 200));
     }
 
 }
