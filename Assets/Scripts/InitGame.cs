@@ -12,7 +12,7 @@ public class InitGame : MonoBehaviour {
     {
         SfxManager.PlayLoop(0); // Start ambient noise
         //SfxManager.PlaySfx(14); // Phone ringing
-        yield return new WaitForSeconds(3);
-        SfxManager.PlaySfx(8); // Intro dialogue
+        yield return null;
+        //SfxManager.PlaySfx(8); // Intro dialogue
     }
 }
