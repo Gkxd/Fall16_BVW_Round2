@@ -62,6 +62,8 @@ public class ElevatorControls : MonoBehaviour
 
     private Vector3 floorDisplayPosition;
 
+    private int lightParticleIndex = 0;
+
 
     void Start()
     {
@@ -98,7 +100,7 @@ public class ElevatorControls : MonoBehaviour
                 }
                 else
                 {
-                    moveDoorsRoutine = StartCoroutine(MoveDoorsRoutine(doorPosition, doorPosition + (open ? 0.1f : -0.1f), waitTime: 1));
+                    moveDoorsRoutine = StartCoroutine(MoveDoorsRoutine(doorPosition, doorPosition + (open ? 0.2f : -0.2f), waitTime: 1));
                 }
             }
             else if (canCloseDoors && !open)
@@ -347,56 +349,57 @@ public class ElevatorControls : MonoBehaviour
                 StartCoroutine(AnimateFloorDisplay());
 
                 // 30 seconds
-                yield return new WaitForSeconds(5);
-                SfxManager.PlaySfx(27);
-                SfxManager.PlaySfx(21);
-                SfxManager.PlaySfx(22);
-                CameraShake.ShakeCamera(0.3f, 3);
-                lightControl.CeilingLightOff(0);
-                ElevatorLightBurst(0);
-
-                yield return new WaitForSeconds(5);
-                SfxManager.PlaySfx(29);
-                SfxManager.PlaySfx(25);
-                SfxManager.PlaySfx(26);
-                CameraShake.ShakeCamera(0.3f, 3);
-                lightControl.CeilingLightOff(1);
-                ElevatorLightBurst(1);
-
-                yield return new WaitForSeconds(5);
-                SfxManager.PlaySfx(30);
-                SfxManager.PlaySfx(22);
-                SfxManager.PlaySfx(25);
-                CameraShake.ShakeCamera(0.3f, 3);
-                lightControl.CeilingLightOff(2);
-                ElevatorLightBurst(2);
-
-                yield return new WaitForSeconds(5);
-                SfxManager.PlaySfx(30);
-                SfxManager.PlaySfx(22);
-                SfxManager.PlaySfx(25);
-                CameraShake.ShakeCamera(0.3f, 4);
-                lightControl.CeilingLightOff(3);
-                ElevatorLightBurst(3);
-
-                yield return new WaitForSeconds(5);
-                SfxManager.PlaySfx(29);
-                SfxManager.PlaySfx(21);
-                SfxManager.PlaySfx(26);
-                CameraShake.ShakeCamera(0.3f, 4);
-                lightControl.AllLightsOff();
-
-                for (int i = 0; i < elevatorLightSparks.Length; i++)
-                {
-                    elevatorLightSparks[i].Play();
-                }
-
-                yield return new WaitForSeconds(5);
+                yield return new WaitForSeconds(10);
                 onRouteToSecret = false;
-                CameraShake.ShakeCamera(0.3f, 4);
-                SfxManager.PlaySfx(31);
-                SfxManager.PlaySfx(21);
-                SfxManager.PlaySfx(26);
+                //SfxManager.PlaySfx(27);
+                //SfxManager.PlaySfx(21);
+                //SfxManager.PlaySfx(22);
+                //CameraShake.ShakeCamera(0.3f, 3);
+                //lightControl.CeilingLightOff(0);
+                //ElevatorLightBurst(0);
+
+                //yield return new WaitForSeconds(5);
+                //SfxManager.PlaySfx(29);
+                //SfxManager.PlaySfx(25);
+                //SfxManager.PlaySfx(26);
+                //CameraShake.ShakeCamera(0.3f, 3);
+                //lightControl.CeilingLightOff(1);
+                //ElevatorLightBurst(1);
+
+                //yield return new WaitForSeconds(5);
+                //SfxManager.PlaySfx(30);
+                //SfxManager.PlaySfx(22);
+                //SfxManager.PlaySfx(25);
+                //CameraShake.ShakeCamera(0.3f, 3);
+                //lightControl.CeilingLightOff(2);
+                //ElevatorLightBurst(2);
+
+                //yield return new WaitForSeconds(5);
+                //SfxManager.PlaySfx(30);
+                //SfxManager.PlaySfx(22);
+                //SfxManager.PlaySfx(25);
+                //CameraShake.ShakeCamera(0.3f, 4);
+                //lightControl.CeilingLightOff(3);
+                //ElevatorLightBurst(3);
+
+                //yield return new WaitForSeconds(5);
+                //SfxManager.PlaySfx(29);
+                //SfxManager.PlaySfx(21);
+                //SfxManager.PlaySfx(26);
+                //CameraShake.ShakeCamera(0.3f, 4);
+                //lightControl.AllLightsOff();
+
+                //for (int i = 0; i < elevatorLightSparks.Length; i++)
+                //{
+                //    elevatorLightSparks[i].Play();
+                //}
+
+                //yield return new WaitForSeconds(5);
+                //onRouteToSecret = false;
+                //CameraShake.ShakeCamera(0.3f, 4);
+                //SfxManager.PlaySfx(31);
+                //SfxManager.PlaySfx(21);
+                //SfxManager.PlaySfx(26);
             }
             else
             {
@@ -442,7 +445,7 @@ public class ElevatorControls : MonoBehaviour
             yield return new WaitForSeconds(8);
             canCloseDoors = true;
 
-            yield return new WaitForSeconds(10);
+            yield return new WaitForSeconds(8);
             canCloseDoors = false;
 
             // Play banging effect/cutscene
@@ -562,8 +565,12 @@ public class ElevatorControls : MonoBehaviour
     {
         if (codeAccepted == false)
         {
-            SfxManager.PlaySfx(11);
-            CameraShake.ShakeCamera(0.3f, 2);
+            lightParticleIndex++;
+            SfxManager.PlaySfx(Random.Range(27,33));
+            CameraShake.ShakeCamera(0.3f,3);
+            ElevatorLightBurst(lightParticleIndex % 4);
+            if(lightParticleIndex<=4)
+                lightControl.CeilingLightOff(lightParticleIndex % 4);
             SfxManager.PlaySfx(Random.Range(21, 26));
         }
     }

@@ -19,7 +19,7 @@ public class PanelButton : MonoBehaviour {
 
     void FixedUpdate()
     {
-        buttonVisual.localPosition = Vector3.Lerp(buttonVisual.localPosition, Vector3.zero, 0.1f);
+        buttonVisual.localPosition = Vector3.Lerp(buttonVisual.localPosition, Vector3.zero, 0.5f);
     }
 
     // Update is called once per frame
