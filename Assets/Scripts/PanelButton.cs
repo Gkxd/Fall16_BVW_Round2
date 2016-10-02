@@ -24,9 +24,6 @@ public class PanelButton : MonoBehaviour {
 
     // Update is called once per frame
     void OnTriggerEnter() {
-
-        Debug.Log("asdasdasd");
-
         onButtonPress.Invoke();
         buttonVisual.localPosition = Vector3.back * 0.002f;
     }

@@ -9,6 +9,7 @@ public class ElevatorControls : MonoBehaviour
     public Transform leftDoor;
     public Transform rightDoor;
     public Transform cabinetDoor;
+    public Transform playerForward;
 
     public float elevatorDoorSpeed;
     public float elevatorFloorInterval;
@@ -24,12 +25,12 @@ public class ElevatorControls : MonoBehaviour
     public GameObject floor1; // Hallway covered in rubble
     public GameObject floor2; // Hallway with monster running at you
     public GameObject floor3; // Hallway with jumpscare/death
-
-    public GameObject shepardTone;
+    
+    public GameObject sfxBehindYou;
+    public GameObject jumpScare;
 
     public CameraFade cameraFade;
-
-    public Renderer[] hallLights;
+    
     public ParticleSystem[] elevatorLightSparks;
 
     private Vector3 leftDoorClosedPosition;
@@ -90,7 +91,7 @@ public class ElevatorControls : MonoBehaviour
 
     public void MoveDoors(bool open) // true = open, false = close
     {
-        if (moveDoorsRoutine == null)
+        if (moveDoorsRoutine == null && !cabinetOpen)
         {
             if (moveFloorsRoutine == null || canCloseDoors || canOpenDoors)
             {
@@ -248,7 +249,7 @@ public class ElevatorControls : MonoBehaviour
 
     public void MoveFloor(int floor)
     {
-        if (moveDoorsRoutine == null && moveFloorsRoutine == null && floor != floorPosition)
+        if (moveDoorsRoutine == null && moveFloorsRoutine == null && floor != floorPosition && !cabinetOpen)
         {
             moveFloorsRoutine = StartCoroutine(MoveFloorsRoutine(floorPosition, floor));
         }
@@ -274,21 +275,6 @@ public class ElevatorControls : MonoBehaviour
         }
 
         yield return new WaitForSeconds(1);
-
-        if (floorsVisited > 0) // Disable lights on later floors
-        {
-            foreach (Renderer light in hallLights)
-            {
-                FlickerLights flicker = light.GetComponent<FlickerLights>();
-                if (flicker)
-                {
-                    flicker.enabled = false;
-                }
-
-                DynamicGI.SetEmissive(light, Color.black);
-                light.material.SetColor("_EmissionColor", Color.black);
-            }
-        }
 
         SfxManager.PlayLoop(1);
 
@@ -347,59 +333,9 @@ public class ElevatorControls : MonoBehaviour
             {
                 onRouteToSecret = true;
                 StartCoroutine(AnimateFloorDisplay());
-
-                // 30 seconds
+                
                 yield return new WaitForSeconds(10);
                 onRouteToSecret = false;
-                //SfxManager.PlaySfx(27);
-                //SfxManager.PlaySfx(21);
-                //SfxManager.PlaySfx(22);
-                //CameraShake.ShakeCamera(0.3f, 3);
-                //lightControl.CeilingLightOff(0);
-                //ElevatorLightBurst(0);
-
-                //yield return new WaitForSeconds(5);
-                //SfxManager.PlaySfx(29);
-                //SfxManager.PlaySfx(25);
-                //SfxManager.PlaySfx(26);
-                //CameraShake.ShakeCamera(0.3f, 3);
-                //lightControl.CeilingLightOff(1);
-                //ElevatorLightBurst(1);
-
-                //yield return new WaitForSeconds(5);
-                //SfxManager.PlaySfx(30);
-                //SfxManager.PlaySfx(22);
-                //SfxManager.PlaySfx(25);
-                //CameraShake.ShakeCamera(0.3f, 3);
-                //lightControl.CeilingLightOff(2);
-                //ElevatorLightBurst(2);
-
-                //yield return new WaitForSeconds(5);
-                //SfxManager.PlaySfx(30);
-                //SfxManager.PlaySfx(22);
-                //SfxManager.PlaySfx(25);
-                //CameraShake.ShakeCamera(0.3f, 4);
-                //lightControl.CeilingLightOff(3);
-                //ElevatorLightBurst(3);
-
-                //yield return new WaitForSeconds(5);
-                //SfxManager.PlaySfx(29);
-                //SfxManager.PlaySfx(21);
-                //SfxManager.PlaySfx(26);
-                //CameraShake.ShakeCamera(0.3f, 4);
-                //lightControl.AllLightsOff();
-
-                //for (int i = 0; i < elevatorLightSparks.Length; i++)
-                //{
-                //    elevatorLightSparks[i].Play();
-                //}
-
-                //yield return new WaitForSeconds(5);
-                //onRouteToSecret = false;
-                //CameraShake.ShakeCamera(0.3f, 4);
-                //SfxManager.PlaySfx(31);
-                //SfxManager.PlaySfx(21);
-                //SfxManager.PlaySfx(26);
             }
             else
             {
@@ -431,6 +367,7 @@ public class ElevatorControls : MonoBehaviour
         if (floorsVisited == 1) //Floor 2 Cut Scene
         {
             floor1.SetActive(false);
+            floor2.transform.position = Vector3.zero;
             floor2.SetActive(true);
 
             yield return StartCoroutine(MoveDoorsRoutine(0, 1));
@@ -466,64 +403,35 @@ public class ElevatorControls : MonoBehaviour
             SfxManager.PlaySfx(23);
 
             yield return new WaitForSeconds(1);
-            SfxManager.PlaySfx(13);
+            //SfxManager.PlaySfx(13); // Intercom message
+
             StartCoroutine(OpenCabinetDoor());
             passCodeDisplay.text = "---";
-            InvokeRepeating("MonsterHit", 45.0f, 7.0f);
 
-            /*
-            if (doorPosition > 0.5f) // If you don't close door fast enough, you die
-            {
-                yield return new WaitForSeconds(2);
-                cameraFade.CutToBlack();
-            }
-            else // Play banging effect/cutscene
-            {
-                yield return StartCoroutine(MoveDoorsRoutine(doorPosition, 0));
-
-                StopCoroutine(flickerLightsRoutine);
-
-                lightControl.AllLightsOn();
-                floor2.SetActive(false);
-
-                SfxManager.PlaySfx(11);
-                CameraShake.ShakeCamera(0.3f, 2);
-
-                yield return new WaitForSeconds(2);
-                SfxManager.PlaySfx(12);
-                CameraShake.ShakeCamera(0.3f, 2);
-
-                yield return new WaitForSeconds(1);
-                SfxManager.PlaySfx(13);
-                StartCoroutine(OpenCabinetDoor());
-                passCodeDisplay.text = "---";
-                InvokeRepeating("MonsterHit", 45.0f, 7.0f);
-            }
-            */
+            yield return new WaitForSeconds(10);
+            StartCoroutine(MonsterHit());
         }
         else if (floorsVisited == 2) //Floor 3 Cutscene
         {
             floor2.SetActive(false);
+            floor3.transform.position = Vector3.zero;
             floor3.SetActive(true);
+            
+            yield return StartCoroutine(MoveDoorsRoutine(0, 1));
 
-            canOpenDoors = true;
-            StartCoroutine(MoveDoorsRoutine(0, 0.2f));
+            yield return new WaitForSeconds(3);
 
-            yield return new WaitForSeconds(10);
-            canOpenDoors = false;
+            cameraFade.CutToBlack();
 
-            StartCoroutine(MoveDoorsRoutine(doorPosition, 1));
+            yield return new WaitForSeconds(5);
 
-            if (doorPosition < 0.5f) // Player didn't open door fast enough... move to jumpscare scene
-            {
-                yield return new WaitForSeconds(3);
-                Debug.Log("Boo!");
-                cameraFade.CutToBlack();
-            }
-            else // Player wins
-            {
-                cameraFade.FadeToWhite();
-            }
+            sfxBehindYou.SetActive(true);
+
+            yield return new WaitForSeconds(1);
+
+            cameraFade.CutFromBlack();
+
+            StartCoroutine(JumpScareScene());
         }
         else
         {
@@ -561,17 +469,45 @@ public class ElevatorControls : MonoBehaviour
         }
     }
 
-    void MonsterHit()
+    IEnumerator MonsterHit()
     {
-        if (codeAccepted == false)
+        while (true)
         {
-            lightParticleIndex++;
-            SfxManager.PlaySfx(Random.Range(27,33));
-            CameraShake.ShakeCamera(0.3f,3);
-            ElevatorLightBurst(lightParticleIndex % 4);
-            if(lightParticleIndex<=4)
-                lightControl.CeilingLightOff(lightParticleIndex % 4);
-            SfxManager.PlaySfx(Random.Range(21, 26));
+            if (codeAccepted == false)
+            {
+                lightParticleIndex++;
+
+                SfxManager.PlaySfx(Random.Range(27, 33));
+
+                CameraShake.ShakeCamera(0.1f, 0.7f);
+
+                ElevatorLightBurst(lightParticleIndex % 4);
+
+                if (lightParticleIndex <= 5)
+                    lightControl.CeilingLightOff(lightParticleIndex % 5);
+                SfxManager.PlaySfx(Random.Range(21, 26));
+
+                yield return new WaitForSeconds(Random.Range(1f, 10f));
+            }
+            else
+            {
+                break;
+            }
+        }
+    }
+
+    IEnumerator JumpScareScene()
+    {
+        bool hasLookedBehind = false;
+        while (!hasLookedBehind)
+        {
+            Debug.Log(playerForward.forward + " " + Vector3.back + " " + Vector3.Angle(playerForward.forward, Vector3.back));
+            if (Vector3.Angle(playerForward.forward, Vector3.back) < 60f)
+            {
+                hasLookedBehind = true;
+                jumpScare.SetActive(true);
+            }
+            yield return null;
         }
     }
 

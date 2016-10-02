@@ -11,14 +11,30 @@ public class LightControl : MonoBehaviour {
 
     public void CeilingLightOff (int i)
     {
-        ceilingLights[i].material.SetColor("_EmissionColor", Color.black);
-        DynamicGI.SetEmissive(ceilingLights[i], Color.black);
+        if (i == 4)
+        {
+            ceilingLights[i].materials[1].SetColor("_EmissionColor", Color.black);
+            DynamicGI.SetEmissive(ceilingLights[i], Color.black);
+        }
+        else
+        {
+            ceilingLights[i].material.SetColor("_EmissionColor", Color.black);
+            DynamicGI.SetEmissive(ceilingLights[i], Color.black);
+        }
     }
 
     public void CeilingLightOn(int i)
     {
-        ceilingLights[i].material.SetColor("_EmissionColor", ceilingLightColor);
-        DynamicGI.SetEmissive(ceilingLights[i], ceilingLightColor);
+        if (i == 4)
+        {
+            ceilingLights[i].materials[1].SetColor("_EmissionColor", ceilingLightColor);
+            DynamicGI.SetEmissive(ceilingLights[i], ceilingLightColor);
+        }
+        else
+        {
+            ceilingLights[i].material.SetColor("_EmissionColor", ceilingLightColor);
+            DynamicGI.SetEmissive(ceilingLights[i], ceilingLightColor);
+        }
     }
 
     public void AllLightsOff()

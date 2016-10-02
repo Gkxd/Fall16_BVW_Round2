@@ -38,6 +38,11 @@ public class CameraFade : _ChangeColor
         isBlack = true;
     }
 
+    public void CutFromBlack()
+    {
+        isBlack = false;
+    }
+
     public void FadeToWhite() {
         GetComponent<TimeKeeper>().resetTime();
         isFadingToWhite = true;
